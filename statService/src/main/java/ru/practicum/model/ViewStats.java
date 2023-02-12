@@ -8,9 +8,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ViewStats   {
-  String app;
-  String uri;
-  Long hits;
-
+public class ViewStats {
+    String app;
+    String uri;
+    Long hits;
 }

@@ -1,15 +1,12 @@
-package ru.practicum.stats;
+package ru.practicum.mappers;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.model.EndpointHit;
-import ru.practicum.model.ViewStats;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StatsMapper {
@@ -33,22 +30,6 @@ public final class StatsMapper {
         return endpointHitDto;
     }
 
-    public static ViewStats toViewStats(EndpointHit endpointHit, Long hits) {
-        ViewStats viewStats = new ViewStats();
-        viewStats.setApp(endpointHit.getApp());
-        viewStats.setUri(endpointHit.getUri());
-        viewStats.setHits(hits);
-        return viewStats;
-    }
-
-    public static List<ViewStats> toViewStatsList(List<EndpointHit> endpointHits, Long hits) {
-        List<ViewStats> result = new ArrayList<>();
-        for (EndpointHit endpointHit : endpointHits) {
-            result.add(toViewStats(endpointHit, hits));
-        }
-        return result;
-    }
-
     public static LocalDateTime stringToLocalDateTime(String timestamp) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime localDateTime = LocalDateTime.parse(timestamp, formatter);
@@ -57,7 +38,8 @@ public final class StatsMapper {
 
     public static String localDateTimeToString(LocalDateTime timestamp) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String localDateTime = timestamp.format(formatter);;
+        String localDateTime = timestamp.format(formatter);
+        ;
         return localDateTime;
     }
 

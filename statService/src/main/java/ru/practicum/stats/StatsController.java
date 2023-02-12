@@ -3,11 +3,9 @@ package ru.practicum.stats;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.EndpointHitDto;
-import ru.practicum.model.EndpointHit;
 import ru.practicum.model.ViewStats;
 
 import javax.validation.Valid;

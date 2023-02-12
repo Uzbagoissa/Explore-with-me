@@ -17,9 +17,9 @@ public class ErrorHandler {
         return new ErrorResponse(Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
     }
 
-    /*@ExceptionHandler
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable e) {
         return new ErrorResponse("Произошла непредвиденная ошибка.");
-    }*/
+    }
 }
