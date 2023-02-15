@@ -1,4 +1,4 @@
-package ru.practicum;
+package ru.practicum.User;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -16,11 +16,11 @@ import javax.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id = null;
+    Long id;
 
     @Column(name = "name", nullable = false)
-    private String name = null;
+    String name;
 
     @Column(name = "email", nullable = false)
-    private String email = null;
+    String email;
 }
