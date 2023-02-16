@@ -2,6 +2,7 @@ package ru.practicum.Event;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.Category.Category;
 import ru.practicum.Category.CategoryDto;
 import ru.practicum.User.UserDto;
 
@@ -23,34 +24,40 @@ public class Event {
     @Column(name = "annotation", nullable = false)
     String annotation;
 
-    @Column(name = "category", nullable = false)
-    Long categoryId;
+    @Column(name = "category_id", nullable = false)
+    Long category;
 
-    @Column(name = "confirmedRequests", nullable = false)
+    @Column(name = "confirmed_requests", nullable = false)
     Long confirmedRequests;
 
-    @Column(name = "createdOn", nullable = false)
+    @Column(name = "created_on", nullable = false)
     LocalDateTime createdOn;
 
     @Column(name = "description", nullable = false)
     String description;
 
-    @Column(name = "eventDate", nullable = false)
+    @Column(name = "event_date", nullable = false)
     LocalDateTime eventDate;
 
-    @Column(name = "initiator", nullable = false)
+    @Column(name = "initiator_id", nullable = false)
     Long initiatorId;
+
+    @Column(name = "lat", nullable = false)
+    Float lat;
+
+    @Column(name = "lon", nullable = false)
+    Float lon;
 
     @Column(name = "paid", nullable = false)
     Boolean paid;
 
-    @Column(name = "participantLimit", nullable = false)
+    @Column(name = "participant_limit", nullable = false)
     Long participantLimit;
 
-    @Column(name = "publishedOn", nullable = false)
+    @Column(name = "published_on", nullable = false)
     LocalDateTime publishedOn;
 
-    @Column(name = "requestModeration", nullable = false)
+    @Column(name = "request_moderation", nullable = false)
     Boolean requestModeration;
 
     @Column(name = "state", nullable = false)
@@ -62,10 +69,7 @@ public class Event {
     @Column(name = "views", nullable = false)
     Long views;
 
-    @Transient
-    CategoryDto categoryDto;
-
-    @Transient
-    UserDto userDto;
+    @Column(name = "state_action")
+    String stateAction;
 
 }

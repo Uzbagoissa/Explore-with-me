@@ -2,12 +2,9 @@ package ru.practicum.Event;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.aspectj.lang.annotation.After;
+import ru.practicum.Category.CategoryDto;
+import ru.practicum.User.UserDto;
 
-import javax.persistence.Column;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,13 +12,21 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class EventDto {
+public class FullEventDto {
+    Long id;
     String annotation;
-    Long categoryId;
+    CategoryDto category;
+    Long confirmedRequests;
+    String createdOn;
     String description;
-    LocalDateTime eventDate;
+    String eventDate;
+    UserDto initiator;
+    Location location;
     Boolean paid;
     Long participantLimit;
+    String publishedOn;
     Boolean requestModeration;
+    String state;
     String title;
+    Long views;
 }

@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.Event.Event;
+import ru.practicum.Event.EventRepository;
 import ru.practicum.User.UserDto;
 import ru.practicum.User.UserMapper;
 import ru.practicum.User.UserRepository;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository repository;
+    private final EventRepository eventRepository;
     @Override
     public List<CategoryDto> getAllCategories(long from, long size) {
         return CategoryMapper.toListCategoryDto(repository.findAll()).stream()
@@ -46,16 +49,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void removeCategory(long catId) {
         categoryValid(catId);
+        for (Event event : eventRepository.findAll()) {
+            if (event.getCategory() == catId){
+                log.error("Существуют события, связанные с категорией {}", catId);
+                throw new ConflictException("Существуют события, связанные с категорией");
+            }
+        }
         repository.deleteById(catId);
-        /*
-
-
-
-        Добавить условие для связанных событий!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-        */
     }
 
     @Transactional
