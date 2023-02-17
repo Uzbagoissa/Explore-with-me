@@ -2,10 +2,14 @@ package ru.practicum.Event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.Category.*;
-import ru.practicum.User.UserDto;
 import ru.practicum.User.UserMapper;
 import ru.practicum.User.UserRepository;
 import ru.practicum.exceptions.ConflictException;
@@ -24,16 +28,138 @@ public class EventServiceImpl implements EventService {
     private final EventRepository repository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<FullEventDto> getAllEvents(String text, List<Long> categories, boolean paid, String rangeStart, String rangeEnd, boolean onlyAvailable, String sort, long from, long size) {
-        return null;
+    public List<EventFullDto> getAllEvents(String text, List<Long> categories, boolean paid, String rangeStart,
+                                           String rangeEnd, boolean onlyAvailable, String sort, long from, long size) {
+        /*Надо протестировать этот блядский метод!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         * */
+        List<Event> events = new ArrayList<>();
+        String state = StateEnum.PUBLISHED.toString();
+        if (rangeStart != null && rangeEnd != null){
+            LocalDateTime start = EventMapper.stringToLocalDateTime(rangeStart);
+            LocalDateTime end = EventMapper.stringToLocalDateTime(rangeEnd);
+            if (onlyAvailable == true){
+                if (sort.equals("EVENT_DATE")){
+                    for (Long category : categories) {
+                        for (Event event : repository.findEventsAvailablePaidInRangeByCategoryIdSortByEventDate(start, end, category,
+                                paid, state)) {
+                            if (event.getAnnotation().toLowerCase().contains(text.toLowerCase())
+                                    || event.getDescription().toLowerCase().contains(text.toLowerCase())){
+                                events.add(event);
+                            }
+                        }
+                    }
+                } else if (sort.equals("VIEWS")){
+                    for (Long category : categories) {
+                        for (Event event : repository.findEventsAvailablePaidInRangeByCategoryIdSortByViews(start, end, category,
+                                paid, state)) {
+                            if (event.getAnnotation().toLowerCase().contains(text.toLowerCase())
+                                    || event.getDescription().toLowerCase().contains(text.toLowerCase())){
+                                events.add(event);
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (sort.equals("EVENT_DATE")){
+                    for (Long category : categories) {
+                        for (Event event : repository.findEventsPaidInRangeByCategoryIdSortByEventDate(start, end, category,
+                                paid, state)) {
+                            if (event.getAnnotation().toLowerCase().contains(text.toLowerCase())
+                                    || event.getDescription().toLowerCase().contains(text.toLowerCase())){
+                                events.add(event);
+                            }
+                        }
+                    }
+                } else if (sort.equals("VIEWS")){
+                    for (Long category : categories) {
+                        for (Event event : repository.findEventsPaidInRangeByCategoryIdSortByViews(start, end, category,
+                                paid, state)) {
+                            if (event.getAnnotation().toLowerCase().contains(text.toLowerCase())
+                                    || event.getDescription().toLowerCase().contains(text.toLowerCase())){
+                                events.add(event);
+                            }
+                        }
+                    }
+                }
+            }
+        } else if (rangeStart == null && rangeEnd == null){
+            if (onlyAvailable == true){
+                if (sort.equals("EVENT_DATE")){
+                    for (Long category : categories) {
+                        for (Event event : repository.findEventsAvailablePaidByCategoryIdSortByEventDate(LocalDateTime.now(),
+                                category, paid, state)) {
+                            if (event.getAnnotation().toLowerCase().contains(text.toLowerCase())
+                                    || event.getDescription().toLowerCase().contains(text.toLowerCase())){
+                                events.add(event);
+                            }
+                        }
+                    }
+                } else if (sort.equals("VIEWS")){
+                    for (Long category : categories) {
+                        for (Event event : repository.findEventsAvailablePaidByCategoryIdSortByViews(LocalDateTime.now(),
+                                category, paid, state)) {
+                            if (event.getAnnotation().toLowerCase().contains(text.toLowerCase())
+                                    || event.getDescription().toLowerCase().contains(text.toLowerCase())){
+                                events.add(event);
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (sort.equals("EVENT_DATE")){
+                    for (Long category : categories) {
+                        for (Event event : repository.findEventsPaidByCategoryIdSortByEventDate(LocalDateTime.now(),
+                                category, paid, state)) {
+                            if (event.getAnnotation().toLowerCase().contains(text.toLowerCase())
+                                    || event.getDescription().toLowerCase().contains(text.toLowerCase())){
+                                events.add(event);
+                            }
+                        }
+                    }
+                } else if (sort.equals("VIEWS")){
+                    for (Long category : categories) {
+                        for (Event event : repository.findEventsPaidByCategoryIdSortByViews(LocalDateTime.now(),
+                                category, paid, state)) {
+                            if (event.getAnnotation().toLowerCase().contains(text.toLowerCase())
+                                    || event.getDescription().toLowerCase().contains(text.toLowerCase())){
+                                events.add(event);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return events.stream()
+                .skip(from)
+                .limit(size)
+                .map(this::toFullEventDtoAbsolutely)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public FullEventDto getEventById(long id) {
+    public EventFullDto getEventById(long id) {
         eventValid(id);
         if (repository.getById(id).getState().equals(StateEnum.PUBLISHED.toString())){
+            String sqlSelect = "SELECT views FROM events WHERE id = ?";
+            Long views = jdbcTemplate.queryForObject(sqlSelect, Long.class, id);
+            views++;
+            String sqlUpdate = "UPDATE events SET views = ? WHERE id = ?";
+            jdbcTemplate.update(sqlUpdate, views, id);
             return toFullEventDtoAbsolutely(repository.findEventById(id));
         } else {
             log.error("Можно найти только опубликованное событие");
@@ -42,7 +168,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<FullEventDto> getAllEventsByUserId(long userId, long from, long size) {
+    public List<EventFullDto> getAllEventsByUserId(long userId, long from, long size) {
         userValid(userId);
         return repository.findEventsByUserId(userId).stream()
                 .skip(from)
@@ -52,14 +178,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public FullEventDto getEventByIdAndByUserId(long userId, long eventId) {
+    public EventFullDto getEventByIdAndByUserId(long userId, long eventId) {
         userValid(userId);
         eventValid(eventId);
         return toFullEventDtoAbsolutely(repository.findEventByIdAndByUserId(eventId, userId));
     }
 
     @Override
-    public List<FullEventDto> getAllEventsAdmin(List<Long> userIds, List<String> states, List<Long> categories,
+    public List<EventFullDto> getAllEventsAdmin(List<Long> userIds, List<String> states, List<Long> categories,
                                                 String rangeStart, String rangeEnd, long from, long size) {
         LocalDateTime start = EventMapper.stringToLocalDateTime(rangeStart);
         LocalDateTime end = EventMapper.stringToLocalDateTime(rangeEnd);
@@ -111,57 +237,95 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public FullEventDto saveEvent(long userId, NewEventDto newEventDto) {
+    public EventFullDto saveEvent(long userId, EventNewDto eventNewDto) {
         userValid(userId);
-        eventDateValid(EventMapper.stringToLocalDateTime(newEventDto.getEventDate()));
-        Event event = EventMapper.toEvent(newEventDto, 0L, LocalDateTime.now(), userId, LocalDateTime.now(),
+        eventDateValid(EventMapper.stringToLocalDateTime(eventNewDto.getEventDate()));
+        Event event = EventMapper.toEvent(eventNewDto, 0L, LocalDateTime.now(), userId, LocalDateTime.now(),
                 StateEnum.PENDING.toString(), 0L);
         repository.save(event);
-        FullEventDto fullEventDto = EventMapper.toFullEventDto(event,
-                CategoryMapper.toCategoryDto(categoryRepository.getById(newEventDto.getCategory())),
+        EventFullDto eventFullDto = EventMapper.toFullEventDto(event,
+                CategoryMapper.toCategoryDto(categoryRepository.getById(eventNewDto.getCategory())),
                 UserMapper.toUserDto(userRepository.getById(userId)));
-        return fullEventDto;
+        return eventFullDto;
     }
 
     @Override
-    public FullEventDto updateEvent(long userId, long eventId, NewEventDtoWithState newEventDtoWithState) {
+    public EventFullDto updateEvent(long userId, long eventId, EventNewDtoForUpdate eventNewDtoForUpdate) {
         userValid(userId);
         eventValid(eventId);
         eventPublishValid(eventId);
-        eventDateValid(EventMapper.stringToLocalDateTime(newEventDtoWithState.getEventDate()));
         Event event = repository.getById(eventId);
         if (event.getInitiatorId() != userId) {
             log.error("Пользователь с id {} не может изменять это событие с id {}!", userId, eventId);
             throw new ConflictException("Пользователю запрещено изменять чужое событие!");
         }
-        Event updatedEvent = EventMapper.toEvent(newEventDtoWithState, event.getConfirmedRequests(), event.getCreatedOn(),
+        if (eventNewDtoForUpdate.getEventDate() != null){
+            eventDateValid(EventMapper.stringToLocalDateTime(eventNewDtoForUpdate.getEventDate()));
+        } else {
+            eventNewDtoForUpdate.setEventDate(EventMapper.localDateTimeToString(event.getEventDate()));
+        }
+        saveOldVariablesExceptNull(event, eventNewDtoForUpdate);
+        Event updatedEvent = EventMapper.toEvent(eventNewDtoForUpdate, event.getConfirmedRequests(), event.getCreatedOn(),
                 userId, event.getPublishedOn(), StateEnum.PENDING.toString(), event.getViews());
+
         updatedEvent.setId(eventId);
         repository.save(updatedEvent);
         return toFullEventDtoAbsolutely(updatedEvent);
     }
 
     @Override
-    public FullEventDto updateEventAdmin(long eventId, NewEventDtoWithState newEventDtoWithState) {
+    public EventFullDto updateEventAdmin(long eventId, EventNewDtoForUpdate eventNewDtoForUpdate) {
         eventPublishValid(eventId);
-        eventDateValidAdmin(EventMapper.stringToLocalDateTime(newEventDtoWithState.getEventDate()));
         Event event = repository.getById(eventId);
+        if (eventNewDtoForUpdate.getEventDate() != null){
+            eventDateValidAdmin(EventMapper.stringToLocalDateTime(eventNewDtoForUpdate.getEventDate()));
+        } else {
+            eventNewDtoForUpdate.setEventDate(EventMapper.localDateTimeToString(event.getEventDate()));
+        }
+        saveOldVariablesExceptNull(event, eventNewDtoForUpdate);
         String state = "";
-        if (newEventDtoWithState.getStateAction().equals(StateActionEnum.PUBLISH_EVENT.toString())) {
+        if (eventNewDtoForUpdate.getStateAction().equals(StateActionEnum.PUBLISH_EVENT.toString())) {
             state = StateEnum.PUBLISHED.toString();
         }
-        if (newEventDtoWithState.getStateAction().equals(StateActionEnum.CANCEL_EVENT.toString())) {
+        if (eventNewDtoForUpdate.getStateAction().equals(StateActionEnum.CANCEL_EVENT.toString())) {
             state = StateEnum.CANCELED.toString();
         }
         long userId = event.getInitiatorId();
-        Event updatedEvent = EventMapper.toEvent(newEventDtoWithState, event.getConfirmedRequests(), event.getCreatedOn(), userId,
+        Event updatedEvent = EventMapper.toEvent(eventNewDtoForUpdate, event.getConfirmedRequests(), event.getCreatedOn(), userId,
                 LocalDateTime.now(), state, event.getViews());
         updatedEvent.setId(eventId);
         repository.save(updatedEvent);
         return toFullEventDtoAbsolutely(updatedEvent);
     }
 
-    private FullEventDto toFullEventDtoAbsolutely(Event event) {
+    private void saveOldVariablesExceptNull(Event event, EventNewDtoForUpdate eventNewDtoForUpdate) {
+        if (eventNewDtoForUpdate.getAnnotation() == null) {
+            eventNewDtoForUpdate.setAnnotation(event.getAnnotation());
+        }
+        if (eventNewDtoForUpdate.getCategory() == null) {
+            eventNewDtoForUpdate.setCategory(event.getCategory());
+        }
+        if (eventNewDtoForUpdate.getDescription() == null) {
+            eventNewDtoForUpdate.setDescription(event.getDescription());
+        }
+        if (eventNewDtoForUpdate.getLocation() == null) {
+            eventNewDtoForUpdate.setLocation(new Location(event.getLat(), event.getLon()));
+        }
+        if (eventNewDtoForUpdate.getPaid() == null) {
+            eventNewDtoForUpdate.setPaid(event.getPaid());
+        }
+        if (eventNewDtoForUpdate.getParticipantLimit() == null) {
+            eventNewDtoForUpdate.setParticipantLimit(event.getParticipantLimit());
+        }
+        if (eventNewDtoForUpdate.getRequestModeration() == null) {
+            eventNewDtoForUpdate.setRequestModeration(event.getRequestModeration());
+        }
+        if (eventNewDtoForUpdate.getTitle() == null) {
+            eventNewDtoForUpdate.setTitle(event.getTitle());
+        }
+    }
+
+    private EventFullDto toFullEventDtoAbsolutely(Event event) {
         return EventMapper.toFullEventDto(event,
                 CategoryMapper.toCategoryDto(categoryRepository.getById(event.getCategory())),
                 UserMapper.toUserDto(userRepository.getById(event.getInitiatorId())));

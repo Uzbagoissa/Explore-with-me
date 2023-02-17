@@ -2,81 +2,78 @@ package ru.practicum.Event;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.Category.Category;
 import ru.practicum.Category.CategoryDto;
 import ru.practicum.User.UserDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EventMapper {
 
-    public static FullEventDto toFullEventDto(Event event, CategoryDto categoryDto, UserDto userDto) {
-        FullEventDto fullEventDto = new FullEventDto();
-        fullEventDto.setId(event.getId());
-        fullEventDto.setAnnotation(event.getAnnotation());
-        fullEventDto.setCategory(categoryDto);
-        fullEventDto.setConfirmedRequests(event.getConfirmedRequests());
-        fullEventDto.setCreatedOn(localDateTimeToString(event.getCreatedOn()));
-        fullEventDto.setDescription(event.getDescription());
-        fullEventDto.setEventDate(localDateTimeToString(event.getEventDate()));
-        fullEventDto.setInitiator(userDto);
-        fullEventDto.setLocation(new Location(event.getLat(), event.getLon()));
-        fullEventDto.setPaid(event.getPaid());
-        fullEventDto.setParticipantLimit(event.getParticipantLimit());
-        fullEventDto.setPublishedOn(localDateTimeToString(event.getPublishedOn()));
-        fullEventDto.setRequestModeration(event.getRequestModeration());
-        fullEventDto.setState(event.getState());
-        fullEventDto.setTitle(event.getTitle());
-        fullEventDto.setViews(event.getViews());
-        return fullEventDto;
+    public static EventFullDto toFullEventDto(Event event, CategoryDto categoryDto, UserDto userDto) {
+        EventFullDto eventFullDto = new EventFullDto();
+        eventFullDto.setId(event.getId());
+        eventFullDto.setAnnotation(event.getAnnotation());
+        eventFullDto.setCategory(categoryDto);
+        eventFullDto.setConfirmedRequests(event.getConfirmedRequests());
+        eventFullDto.setCreatedOn(localDateTimeToString(event.getCreatedOn()));
+        eventFullDto.setDescription(event.getDescription());
+        eventFullDto.setEventDate(localDateTimeToString(event.getEventDate()));
+        eventFullDto.setInitiator(userDto);
+        eventFullDto.setLocation(new Location(event.getLat(), event.getLon()));
+        eventFullDto.setPaid(event.getPaid());
+        eventFullDto.setParticipantLimit(event.getParticipantLimit());
+        eventFullDto.setPublishedOn(localDateTimeToString(event.getPublishedOn()));
+        eventFullDto.setRequestModeration(event.getRequestModeration());
+        eventFullDto.setState(event.getState());
+        eventFullDto.setTitle(event.getTitle());
+        eventFullDto.setViews(event.getViews());
+        return eventFullDto;
     }
 
-    public static Event toEvent(NewEventDto newEventDto, Long confirmedRequests, LocalDateTime createdOn, long userId,
+    public static Event toEvent(EventNewDto eventNewDto, Long confirmedRequests, LocalDateTime createdOn, long userId,
                                 LocalDateTime publishedOn, String state, Long views) {
         Event event = new Event();
-        event.setAnnotation(newEventDto.getAnnotation());
-        event.setCategory(newEventDto.getCategory());
+        event.setAnnotation(eventNewDto.getAnnotation());
+        event.setCategory(eventNewDto.getCategory());
         event.setConfirmedRequests(confirmedRequests);
         event.setCreatedOn(createdOn);
-        event.setDescription(newEventDto.getDescription());
-        event.setEventDate(stringToLocalDateTime(newEventDto.getEventDate()));
+        event.setDescription(eventNewDto.getDescription());
+        event.setEventDate(stringToLocalDateTime(eventNewDto.getEventDate()));
         event.setInitiatorId(userId);
-        event.setLat(newEventDto.getLocation().getLat());
-        event.setLon(newEventDto.getLocation().getLon());
-        event.setPaid(newEventDto.getPaid());
-        event.setParticipantLimit(newEventDto.getParticipantLimit());
+        event.setLat(eventNewDto.getLocation().getLat());
+        event.setLon(eventNewDto.getLocation().getLon());
+        event.setPaid(eventNewDto.getPaid());
+        event.setParticipantLimit(eventNewDto.getParticipantLimit());
         event.setPublishedOn(publishedOn);
-        event.setRequestModeration(newEventDto.getRequestModeration());
+        event.setRequestModeration(eventNewDto.getRequestModeration());
         event.setState(state);
-        event.setTitle(newEventDto.getTitle());
+        event.setTitle(eventNewDto.getTitle());
         event.setViews(views);
         return event;
     }
 
-    public static Event toEvent(NewEventDtoWithState newEventDtoWithState, Long confirmedRequests, LocalDateTime createdOn,
+    public static Event toEvent(EventNewDtoForUpdate eventNewDtoForUpdate, Long confirmedRequests, LocalDateTime createdOn,
                                 long userId, LocalDateTime publishedOn, String state, Long views) {
         Event event = new Event();
-        event.setAnnotation(newEventDtoWithState.getAnnotation());
-        event.setCategory(newEventDtoWithState.getCategory());
+        event.setAnnotation(eventNewDtoForUpdate.getAnnotation());
+        event.setCategory(eventNewDtoForUpdate.getCategory());
         event.setConfirmedRequests(confirmedRequests);
         event.setCreatedOn(createdOn);
-        event.setDescription(newEventDtoWithState.getDescription());
-        event.setEventDate(stringToLocalDateTime(newEventDtoWithState.getEventDate()));
+        event.setDescription(eventNewDtoForUpdate.getDescription());
+        event.setEventDate(stringToLocalDateTime(eventNewDtoForUpdate.getEventDate()));
         event.setInitiatorId(userId);
-        event.setLat(newEventDtoWithState.getLocation().getLat());
-        event.setLon(newEventDtoWithState.getLocation().getLon());
-        event.setPaid(newEventDtoWithState.getPaid());
-        event.setParticipantLimit(newEventDtoWithState.getParticipantLimit());
+        event.setLat(eventNewDtoForUpdate.getLocation().getLat());
+        event.setLon(eventNewDtoForUpdate.getLocation().getLon());
+        event.setPaid(eventNewDtoForUpdate.getPaid());
+        event.setParticipantLimit(eventNewDtoForUpdate.getParticipantLimit());
         event.setPublishedOn(publishedOn);
-        event.setRequestModeration(newEventDtoWithState.getRequestModeration());
+        event.setRequestModeration(eventNewDtoForUpdate.getRequestModeration());
         event.setState(state);
-        event.setTitle(newEventDtoWithState.getTitle());
+        event.setTitle(eventNewDtoForUpdate.getTitle());
         event.setViews(views);
-        event.setStateAction(newEventDtoWithState.getStateAction());
+        event.setStateAction(eventNewDtoForUpdate.getStateAction());
         return event;
     }
 

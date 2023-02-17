@@ -5,22 +5,17 @@ import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NewEventDto {
-    @NotNull
-    @NotBlank(message = "Ошибка: annotation пустое или содержит только пробелы")
+public class EventNewDtoForUpdate {
     String annotation;
 
     Long category;
 
-    @NotNull
-    @NotBlank(message = "Ошибка: description пустое или содержит только пробелы")
     String description;
 
     String eventDate;
@@ -33,7 +28,7 @@ public class NewEventDto {
 
     Boolean requestModeration;
 
-    @NotNull
-    @NotBlank(message = "Ошибка: title пустое или содержит только пробелы")
     String title;
+
+    String stateAction;
 }

@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NewEventDtoWithState {
+public class EventNewDto {
     @NotNull
     @NotBlank(message = "Ошибка: annotation пустое или содержит только пробелы")
     String annotation;
@@ -35,5 +35,4 @@ public class NewEventDtoWithState {
     @NotNull
     @NotBlank(message = "Ошибка: title пустое или содержит только пробелы")
     String title;
-    String stateAction;
 }

@@ -63,4 +63,60 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "from events as e " +
             "where e.event_date > ?1 and e.event_date < ?2 and e.state = ?3 ", nativeQuery = true)
     List<Event> findEventsInRangeByState(LocalDateTime rangeStart, LocalDateTime rangeEnd, String state);
+
+    @Query(value = "select e.* " +
+            "from events as e " +
+            "where e.event_date > ?1 and e.event_date < ?2 and e.category_id = ?3 " +
+            "and e.paid = ?4 and e.confirmed_requests < e.participant_limit and e.state = ?5 " +
+            "order by e.event_date desc ", nativeQuery = true)
+    List<Event> findEventsAvailablePaidInRangeByCategoryIdSortByEventDate(LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                                                            Long category, boolean paid, String state);
+
+    @Query(value = "select e.* " +
+            "from events as e " +
+            "where e.event_date > ?1 and e.event_date < ?2 and e.category_id = ?3 " +
+            "and e.paid = ?4 and e.confirmed_requests < e.participant_limit  and e.state = ?5 " +
+            "order by e.views desc ", nativeQuery = true)
+    List<Event> findEventsAvailablePaidInRangeByCategoryIdSortByViews(LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                                                          Long category, boolean paid, String state);
+
+    @Query(value = "select e.* " +
+            "from events as e " +
+            "where e.event_date > ?1 and e.event_date < ?2 and e.category_id = ?3 " +
+            "and e.paid = ?4  and e.state = ?5 order by e.event_date desc ", nativeQuery = true)
+    List<Event> findEventsPaidInRangeByCategoryIdSortByEventDate(LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                                                          Long category, boolean paid, String state);
+
+    @Query(value = "select e.* " +
+            "from events as e " +
+            "where e.event_date > ?1 and e.event_date < ?2 and e.category_id = ?3 " +
+            "and e.paid = ?4  and e.state = ?5 order by e.views desc ", nativeQuery = true)
+    List<Event> findEventsPaidInRangeByCategoryIdSortByViews(LocalDateTime rangeStart, LocalDateTime rangeEnd, Long category,
+                                                             boolean paid, String state);
+
+    @Query(value = "select e.* " +
+            "from events as e " +
+            "where e.event_date > ?1 and e.category_id = ?2 and e.paid = ?3 and e.confirmed_requests < e.participant_limit " +
+            "and e.state = ?4 order by e.event_date desc ", nativeQuery = true)
+    List<Event> findEventsAvailablePaidByCategoryIdSortByEventDate(LocalDateTime nowTime, Long category, boolean paid,
+                                                                   String state);
+
+    @Query(value = "select e.* " +
+            "from events as e " +
+            "where e.event_date > ?1 and e.category_id = ?2 and e.paid = ?3 and e.confirmed_requests < e.participant_limit " +
+            "and e.state = ?4 order by e.views desc ", nativeQuery = true)
+    List<Event> findEventsAvailablePaidByCategoryIdSortByViews(LocalDateTime nowTime, Long category, boolean paid,
+                                                               String state);
+
+    @Query(value = "select e.* " +
+            "from events as e " +
+            "where e.event_date > ?1 and e.category_id = ?2 and e.paid = ?3  and e.state = ?5 " +
+            "order by e.event_date desc ", nativeQuery = true)
+    List<Event> findEventsPaidByCategoryIdSortByEventDate(LocalDateTime nowTime, Long category, boolean paid, String state);
+
+    @Query(value = "select e.* " +
+            "from events as e " +
+            "where e.event_date > ?1 and e.category_id = ?2 and e.paid = ?3 and e.state = ?4 " +
+            "order by e.views desc ", nativeQuery = true)
+    List<Event> findEventsPaidByCategoryIdSortByViews(LocalDateTime nowTime, Long category, boolean paid, String state);
 }

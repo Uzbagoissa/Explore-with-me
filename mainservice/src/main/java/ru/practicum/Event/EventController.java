@@ -19,12 +19,12 @@ public class EventController {
 
     @GetMapping("/events")
     @ResponseStatus(HttpStatus.OK)
-    public List<FullEventDto> getAllEvents(@RequestParam(value = "text") String text,
+    public List<EventFullDto> getAllEvents(@RequestParam(value = "text") String text,
                                            @RequestParam(value = "categories") List<Long> categories,
                                            @RequestParam(value = "paid") boolean paid,
-                                           @RequestParam(value = "rangeStart") String rangeStart,
-                                           @RequestParam(value = "rangeEnd") String rangeEnd,
-                                           @RequestParam(value = "onlyAvailable") boolean onlyAvailable,
+                                           @RequestParam(value = "rangeStart", required = false) String rangeStart,
+                                           @RequestParam(value = "rangeEnd", required = false) String rangeEnd,
+                                           @RequestParam(value = "onlyAvailable", defaultValue = "false") boolean onlyAvailable,
                                            @RequestParam(value = "sort") String sort,
                                            @RequestParam(value = "from", defaultValue = "0") long from,
                                            @RequestParam(value = "size", defaultValue = "10") long size) {
@@ -42,14 +42,14 @@ public class EventController {
 
     @GetMapping("/events/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public FullEventDto getEventById(@PathVariable("id") long id) {
+    public EventFullDto getEventById(@PathVariable("id") long id) {
         log.info("Событие найдено");
         return eventService.getEventById(id);
     }
 
     @GetMapping("/users/{userId}/events")
     @ResponseStatus(HttpStatus.OK)
-    public List<FullEventDto> getAllEventsByUserId(@PathVariable("userId") long userId,
+    public List<EventFullDto> getAllEventsByUserId(@PathVariable("userId") long userId,
                                                    @RequestParam(value = "from", defaultValue = "0") long from,
                                                    @RequestParam(value = "size", defaultValue = "10") long size) {
         if (from < 0) {
@@ -66,7 +66,7 @@ public class EventController {
 
     @GetMapping("/users/{userId}/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    public FullEventDto getEventByIdAndByUserId(@PathVariable("userId") long userId,
+    public EventFullDto getEventByIdAndByUserId(@PathVariable("userId") long userId,
                                                 @PathVariable("eventId") long eventId) {
         log.info("Событие найдено");
         return eventService.getEventByIdAndByUserId(userId, eventId);
@@ -74,7 +74,7 @@ public class EventController {
 
     @GetMapping("/admin/events")
     @ResponseStatus(HttpStatus.OK)
-    public List<FullEventDto> getAllEventsAdmin(@RequestParam(value = "userIds", required = false) List<Long> userIds,
+    public List<EventFullDto> getAllEventsAdmin(@RequestParam(value = "userIds", required = false) List<Long> userIds,
                                                 @RequestParam(value = "states", required = false) List<String> states,
                                                 @RequestParam(value = "categories", required = false) List<Long> categories,
                                                 @RequestParam(value = "rangeStart") String rangeStart,
@@ -95,26 +95,26 @@ public class EventController {
 
     @PostMapping("/users/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
-    public FullEventDto saveEvent(@PathVariable("userId") long userId,
-                                  @Valid @RequestBody NewEventDto newEventDto) {
+    public EventFullDto saveEvent(@PathVariable("userId") long userId,
+                                  @Valid @RequestBody EventNewDto eventNewDto) {
         log.info("Событие добавлено");
-        return eventService.saveEvent(userId, newEventDto);
+        return eventService.saveEvent(userId, eventNewDto);
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    public FullEventDto updateEvent(@PathVariable("userId") long userId,
+    public EventFullDto updateEvent(@PathVariable("userId") long userId,
                                     @PathVariable("eventId") long eventId,
-                                    @Valid @RequestBody NewEventDtoWithState newEventDtoWithState) {
+                                    @Valid @RequestBody EventNewDtoForUpdate eventNewDtoForUpdate) {
         log.info("Событие обновлено");
-        return eventService.updateEvent(userId, eventId, newEventDtoWithState);
+        return eventService.updateEvent(userId, eventId, eventNewDtoForUpdate);
     }
 
     @PatchMapping("/admin/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    public FullEventDto updateEventAdmin(@PathVariable("eventId") long eventId,
-                                         @Valid @RequestBody NewEventDtoWithState newEventDtoWithState) {
+    public EventFullDto updateEventAdmin(@PathVariable("eventId") long eventId,
+                                         @Valid @RequestBody EventNewDtoForUpdate eventNewDtoForUpdate) {
         log.info("Событие отредактировано");
-        return eventService.updateEventAdmin(eventId, newEventDtoWithState);
+        return eventService.updateEventAdmin(eventId, eventNewDtoForUpdate);
     }
 }

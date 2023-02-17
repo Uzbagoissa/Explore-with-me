@@ -5,14 +5,12 @@ import lombok.experimental.FieldDefaults;
 import ru.practicum.Category.CategoryDto;
 import ru.practicum.User.UserDto;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class FullEventDto {
+public class EventFullDto {
     Long id;
     String annotation;
     CategoryDto category;
