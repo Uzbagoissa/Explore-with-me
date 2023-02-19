@@ -3,6 +3,7 @@ package ru.practicum.Requests;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.Event.EventRepository;
@@ -14,6 +15,7 @@ import ru.practicum.exceptions.ConflictException;
 import ru.practicum.exceptions.NotFoundException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,17 +28,25 @@ public class RequestServiceImpl implements RequestService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final JdbcTemplate jdbcTemplate;
+
     @Override
-    public List<RequestDto> getAllRequestsByUserId(long userId) {
+    public List<RequestDto> getAllRequestsOfUser(long userId) {
         userValid(userId);
         return RequestMapper.toListRequestDto(repository.findRequestsByUserId(userId));
+    }
+
+    @Override
+    public List<RequestDto> getAllRequestsByOwnerIdAndByEventId(long userId, long eventId) {
+        userValid(userId);
+        eventValid(eventId);
+        return RequestMapper.toListRequestDto(repository.findAllByOwnerIdAndByEventId(userId, eventId));
     }
 
     @Override
     public RequestDto saveRequest(long userId, long eventId) {
         userValid(userId);
         eventValid(eventId);
-        if (repository.findRequestByUserIdAndByEventId(userId, eventId).size() != 0) {
+        if (repository.findRequestsByUserIdAndByEventId(userId, eventId).size() != 0) {
             log.error("Нельзя добавить повторный запрос");
             throw new ConflictException("Нельзя добавить повторный запрос");
         }
@@ -53,7 +63,7 @@ public class RequestServiceImpl implements RequestService {
             throw new ConflictException("Достигнут лимит запросов на участие");
         }
         Request request = RequestMapper.toRequest(userId, eventId);
-        if (!eventRepository.getById(eventId).getRequestModeration()){
+        if (!eventRepository.getById(eventId).getRequestModeration()) {
             request.setStatus(StateEnum.CONFIRMED.toString());
             String sqlSelect = "SELECT confirmed_requests FROM events WHERE id = ?";
             Long confirmedRequests = jdbcTemplate.queryForObject(sqlSelect, Long.class, eventId);
@@ -75,7 +85,7 @@ public class RequestServiceImpl implements RequestService {
             log.error("Пользователь с id {} не может отменить этот запрос с id {}!", userId, requestId);
             throw new ConflictException("Пользователю запрещено отменять чужой запрос!");
         }
-        if (request.getStatus().equals(StateEnum.CONFIRMED.toString())){
+        if (request.getStatus().equals(StateEnum.CONFIRMED.toString())) {
             String sqlSelect = "SELECT confirmed_requests FROM events WHERE id = ?";
             Long confirmedRequests = jdbcTemplate.queryForObject(sqlSelect, Long.class, request.getEvent());
             confirmedRequests--;
@@ -87,8 +97,60 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public void updateRequestsStatus(long userId, long eventId) {
-
+    public RequestListStatusUpdateResult updateRequestsStatus(long userId, long eventId, RequestListStatusUpdate requestListStatusUpdate) {
+        userValid(userId);
+        eventValid(eventId);
+        if (eventRepository.getById(eventId).getConfirmedRequests() == eventRepository.getById(eventId).getParticipantLimit()) {
+            log.error("Достигнут лимит запросов на участие");
+            throw new ConflictException("Достигнут лимит запросов на участие");
+        }
+        List<RequestDto> confirmedRequests = new ArrayList<>();
+        List<RequestDto> rejectedRequests = new ArrayList<>();
+        List<Long> requestIds = new ArrayList<>();
+        long numberPlacesLeft = eventRepository.getById(eventId).getParticipantLimit() -
+                eventRepository.getById(eventId).getConfirmedRequests();
+        if (requestListStatusUpdate.getRequestIds().size() > numberPlacesLeft && requestListStatusUpdate.getStatus().equals("CONFIRMED")) {
+            requestIds = requestListStatusUpdate.getRequestIds().stream()
+                    .map(repository::getById)
+                    .sorted(Comparator.comparing(Request::getCreated))
+                    .map(Request::getId)
+                    .limit(numberPlacesLeft)
+                    .collect(Collectors.toList());
+            for (Long requestId : requestListStatusUpdate.getRequestIds()) {
+                if (!requestIds.contains(requestId)){
+                    Request request = repository.getById(requestId);
+                    request.setStatus("REJECTED");
+                    repository.save(request);
+                    rejectedRequests.add(RequestMapper.toRequestDto(request));
+                }
+            }
+        } else if (requestListStatusUpdate.getRequestIds().size() <= numberPlacesLeft && requestListStatusUpdate.getStatus().equals("CONFIRMED")){
+            requestIds = requestListStatusUpdate.getRequestIds();
+        }
+        for (Long requestId : requestIds) {
+            Request request = repository.getById(requestId);
+            request.setStatus(requestListStatusUpdate.getStatus());
+            String sqlSelect = "SELECT confirmed_requests FROM events WHERE id = ?";
+            Long numberConfirmedRequests = jdbcTemplate.queryForObject(sqlSelect, Long.class, eventId);
+            numberConfirmedRequests++;
+            String sqlUpdate = "UPDATE events SET confirmed_requests = ? WHERE id = ?";
+            jdbcTemplate.update(sqlUpdate, numberConfirmedRequests, eventId);
+            String sql = "SELECT * FROM events WHERE id = ?";
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, eventId);
+            rowSet.next();
+            repository.save(request);
+            confirmedRequests.add(RequestMapper.toRequestDto(request));
+        }
+        if (requestListStatusUpdate.getStatus().equals("REJECTED")){
+            requestIds = requestListStatusUpdate.getRequestIds();
+            for (Long requestId : requestIds) {
+                Request request = repository.getById(requestId);
+                request.setStatus(requestListStatusUpdate.getStatus());
+                repository.save(request);
+                rejectedRequests.add(RequestMapper.toRequestDto(request));
+            }
+        }
+        return new RequestListStatusUpdateResult(confirmedRequests, rejectedRequests);
     }
 
     private void requestValid(long requestId) {

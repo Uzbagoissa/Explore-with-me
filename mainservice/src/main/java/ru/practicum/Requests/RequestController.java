@@ -21,9 +21,17 @@ public class RequestController {
 
     @GetMapping("/requests")
     @ResponseStatus(HttpStatus.OK)
-    public List<RequestDto> getAllRequestsByUserId(@PathVariable("userId") long userId) {
+    public List<RequestDto> getAllRequestsOfUser(@PathVariable("userId") long userId) {
         log.info("Найдены запросы на участие");
-        return requestService.getAllRequestsByUserId(userId);
+        return requestService.getAllRequestsOfUser(userId);
+    }
+
+    @GetMapping("/events/{eventId}/requests")
+    @ResponseStatus(HttpStatus.OK)
+    public List<RequestDto> getAllRequestsByOwnerIdAndByEventId(@PathVariable("userId") long userId,
+                                                                @PathVariable("eventId") long eventId) {
+        log.info("Найдены запросы на участие");
+        return requestService.getAllRequestsByOwnerIdAndByEventId(userId, eventId);
     }
 
     @PostMapping("/requests")
@@ -42,12 +50,12 @@ public class RequestController {
         return requestService.cancelRequest(userId, requestId);
     }
 
-    /*@PatchMapping("/events/{eventId}/requests")
+    @PatchMapping("/events/{eventId}/requests")
     @ResponseStatus(HttpStatus.OK)
-    public RequestDto updateRequestsStatus(@PathVariable("userId") long userId,
-                                    @PathVariable("eventId") long eventId,
-                                    @Valid @RequestBody UserDto userDto) {
+    public RequestListStatusUpdateResult updateRequestsStatus(@PathVariable("userId") long userId,
+                                                              @PathVariable("eventId") long eventId,
+                                                              @Valid @RequestBody RequestListStatusUpdate requestListStatusUpdate) {
         log.info("Статус заявок изменён");
-        return requestService.updateRequestsStatus(userId, eventId, userDto);
-    }*/
+        return requestService.updateRequestsStatus(userId, eventId, requestListStatusUpdate);
+    }
 }

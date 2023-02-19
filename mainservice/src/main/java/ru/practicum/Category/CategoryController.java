@@ -37,9 +37,9 @@ public class CategoryController {
 
     @GetMapping("/categories/{catId}")
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDto getCategoriyById(@PathVariable("catId") long catId) {
+    public CategoryDto getCategoryById(@PathVariable("catId") long catId) {
         log.info("Категория найдена");
-        return categoryService.getCategoriyById(catId);
+        return categoryService.getCategoryById(catId);
     }
 
     @PostMapping("/admin/categories")

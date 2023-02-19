@@ -88,4 +88,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "from events as e " +
             "where e.event_date > ?1 and e.category_id = ?2 and e.paid = ?3 and e.state = ?4 ", nativeQuery = true)
     List<Event> findEventsPaidByCategoryId(LocalDateTime nowTime, Long category, boolean paid, String state);
+
 }

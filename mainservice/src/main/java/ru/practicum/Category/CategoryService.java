@@ -11,7 +11,7 @@ import java.util.List;
 public interface CategoryService {
     List<CategoryDto> getAllCategories(long from, long size);
 
-    CategoryDto getCategoriyById(long catId);
+    CategoryDto getCategoryById(long catId);
 
     CategoryDto saveCategory(CategoryDto categoryDto);
 

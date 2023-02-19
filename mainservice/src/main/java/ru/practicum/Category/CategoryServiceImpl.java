@@ -33,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto getCategoriyById(long catId) {
+    public CategoryDto getCategoryById(long catId) {
         categoryValid(catId);
         return CategoryMapper.toCategoryDto(repository.getById(catId));
     }

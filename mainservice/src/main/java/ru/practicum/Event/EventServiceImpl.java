@@ -3,6 +3,7 @@ package ru.practicum.Event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.Category.*;
@@ -12,10 +13,12 @@ import ru.practicum.User.UserRepository;
 import ru.practicum.exceptions.ConflictException;
 import ru.practicum.exceptions.NotFoundException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -101,7 +104,12 @@ public class EventServiceImpl implements EventService {
             views++;
             String sqlUpdate = "UPDATE events SET views = ? WHERE id = ?";
             jdbcTemplate.update(sqlUpdate, views, id);
-            return toFullEventDtoAbsolutely(repository.findEventById(id));
+            String sql = "SELECT * FROM events WHERE id = ?";
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
+            rowSet.next();
+            Event event = repository.findEventById(id);
+            event.setViews(rowSet.getLong("views"));
+            return toFullEventDtoAbsolutely(event);
         } else {
             log.error("Можно найти только опубликованное событие");
             throw new NotFoundException("Можно найти только опубликованное событие");
@@ -109,7 +117,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventFullDto> getAllEventsByUserId(long userId, long from, long size) {
+    public List<EventFullDto> getAllEventsOfOwner(long userId, long from, long size) {
         userValid(userId);
         return repository.findEventsByUserId(userId).stream()
                 .skip(from)
@@ -119,7 +127,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventFullDto getEventByIdAndByUserId(long userId, long eventId) {
+    public EventFullDto getEventOfOwnerByEventId(long userId, long eventId) {
         userValid(userId);
         eventValid(eventId);
         return toFullEventDtoAbsolutely(repository.findEventByIdAndByUserId(eventId, userId));
@@ -184,7 +192,7 @@ public class EventServiceImpl implements EventService {
         Event event = EventMapper.toEvent(eventNewDto, 0L, LocalDateTime.now(), userId, LocalDateTime.now(),
                 StateEnum.PENDING.toString(), 0L);
         repository.save(event);
-        EventFullDto eventFullDto = EventMapper.toFullEventDto(event,
+        EventFullDto eventFullDto = EventMapper.toEventFullDto(event,
                 CategoryMapper.toCategoryDto(categoryRepository.getById(eventNewDto.getCategory())),
                 UserMapper.toUserDto(userRepository.getById(userId)));
         return eventFullDto;
@@ -267,7 +275,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private EventFullDto toFullEventDtoAbsolutely(Event event) {
-        return EventMapper.toFullEventDto(event,
+        return EventMapper.toEventFullDto(event,
                 CategoryMapper.toCategoryDto(categoryRepository.getById(event.getCategory())),
                 UserMapper.toUserDto(userRepository.getById(event.getInitiatorId())));
     }
