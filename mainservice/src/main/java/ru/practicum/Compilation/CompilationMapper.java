@@ -2,6 +2,7 @@ package ru.practicum.Compilation;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import ru.practicum.Event.EventFullDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,12 +10,13 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CompilationMapper {
 
-    public static CompilationDto toCompilationDto(Compilation compilation) {
-        return new CompilationDto(
-                compilation.getId(),
-                compilation.getPinned(),
-                compilation.getTitle()
-        );
+    public static CompilationDto toCompilationDto(Compilation compilation, List<EventFullDto> events) {
+        CompilationDto compilationDto = new CompilationDto();
+        compilationDto.setId(compilation.getId());
+        compilationDto.setEvents(events);
+        compilationDto.setPinned(compilation.getPinned());
+        compilationDto.setTitle(compilation.getTitle());
+        return compilationDto;
     }
 
     public static Compilation toCompilation(CompilationNewDto compilationNewDto) {
@@ -22,14 +24,6 @@ public final class CompilationMapper {
         compilation.setPinned(compilationNewDto.getPinned());
         compilation.setTitle(compilationNewDto.getTitle());
         return compilation;
-    }
-
-    public static List<CompilationDto> toListCompilationDto(Iterable<Compilation> compilations) {
-        List<CompilationDto> result = new ArrayList<>();
-        for (Compilation compilation : compilations) {
-            result.add(toCompilationDto(compilation));
-        }
-        return result;
     }
 
 }

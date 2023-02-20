@@ -74,9 +74,9 @@ public class EventController {
 
     @GetMapping("/admin/events")
     @ResponseStatus(HttpStatus.OK)
-    public List<EventFullDto> getAllEventsAdmin(@RequestParam(value = "userIds", required = false) List<Long> userIds,
+    public List<EventFullDto> getAllEventsAdmin(@RequestParam(value = "userIds", defaultValue = "0") List<Long> userIds,
                                                 @RequestParam(value = "states", required = false) List<String> states,
-                                                @RequestParam(value = "categories", required = false) List<Long> categories,
+                                                @RequestParam(value = "categories", defaultValue = "0") List<Long> categories,
                                                 @RequestParam(value = "rangeStart") String rangeStart,
                                                 @RequestParam(value = "rangeEnd") String rangeEnd,
                                                 @RequestParam(value = "from", defaultValue = "0") long from,
