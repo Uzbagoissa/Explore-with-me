@@ -2,8 +2,6 @@ package ru.practicum.Requests;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.User.User;
-import ru.practicum.User.UserDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

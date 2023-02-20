@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers(List<Long> ids, long from, long size) {
-        if (ids.size() == 0){
+        if (ids.size() == 0) {
             return UserMapper.toListUserDto(repository.findAll().stream()
                     .skip(from)
                     .limit(size)

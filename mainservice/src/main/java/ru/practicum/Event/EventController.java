@@ -50,8 +50,8 @@ public class EventController {
     @GetMapping("/users/{userId}/events")
     @ResponseStatus(HttpStatus.OK)
     public List<EventFullDto> getAllEventsOfOwner(@PathVariable("userId") long userId,
-                                                   @RequestParam(value = "from", defaultValue = "0") long from,
-                                                   @RequestParam(value = "size", defaultValue = "10") long size) {
+                                                  @RequestParam(value = "from", defaultValue = "0") long from,
+                                                  @RequestParam(value = "size", defaultValue = "10") long size) {
         if (from < 0) {
             log.info("Неверный параметр from: {}, from должен быть больше или равен 0 ", from);
             throw new IncorrectParameterException("Неверный параметр from: {}, from должен быть больше или равен 0 " + from);
@@ -67,7 +67,7 @@ public class EventController {
     @GetMapping("/users/{userId}/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto getEventOfOwnerByEventId(@PathVariable("userId") long userId,
-                                                @PathVariable("eventId") long eventId) {
+                                                 @PathVariable("eventId") long eventId) {
         log.info("Событие найдено");
         return eventService.getEventOfOwnerByEventId(userId, eventId);
     }

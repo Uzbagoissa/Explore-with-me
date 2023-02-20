@@ -1,11 +1,5 @@
 package ru.practicum.Category;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import ru.practicum.User.UserDto;
-import ru.practicum.exceptions.IncorrectParameterException;
-
-import javax.validation.Valid;
 import java.util.List;
 
 public interface CategoryService {

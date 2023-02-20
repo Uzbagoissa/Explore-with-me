@@ -6,14 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.Event.Event;
 import ru.practicum.Event.EventRepository;
-import ru.practicum.User.UserDto;
-import ru.practicum.User.UserMapper;
-import ru.practicum.User.UserRepository;
-import ru.practicum.User.UserService;
 import ru.practicum.exceptions.ConflictException;
 import ru.practicum.exceptions.NotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +19,7 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository repository;
     private final EventRepository eventRepository;
+
     @Override
     public List<CategoryDto> getAllCategories(long from, long size) {
         return CategoryMapper.toListCategoryDto(repository.findAll()).stream()
@@ -50,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void removeCategory(long catId) {
         categoryValid(catId);
         for (Event event : eventRepository.findAll()) {
-            if (event.getCategory() == catId){
+            if (event.getCategory() == catId) {
                 log.error("Существуют события, связанные с категорией {}", catId);
                 throw new ConflictException("Существуют события, связанные с категорией");
             }

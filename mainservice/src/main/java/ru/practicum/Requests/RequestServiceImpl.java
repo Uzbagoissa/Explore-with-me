@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.Event.EventRepository;
 import ru.practicum.State.StateEnum;
-import ru.practicum.User.UserDto;
-import ru.practicum.User.UserMapper;
 import ru.practicum.User.UserRepository;
 import ru.practicum.exceptions.ConflictException;
 import ru.practicum.exceptions.NotFoundException;
@@ -117,14 +115,14 @@ public class RequestServiceImpl implements RequestService {
                     .limit(numberPlacesLeft)
                     .collect(Collectors.toList());
             for (Long requestId : requestListStatusUpdate.getRequestIds()) {
-                if (!requestIds.contains(requestId)){
+                if (!requestIds.contains(requestId)) {
                     Request request = repository.getById(requestId);
                     request.setStatus("REJECTED");
                     repository.save(request);
                     rejectedRequests.add(RequestMapper.toRequestDto(request));
                 }
             }
-        } else if (requestListStatusUpdate.getRequestIds().size() <= numberPlacesLeft && requestListStatusUpdate.getStatus().equals("CONFIRMED")){
+        } else if (requestListStatusUpdate.getRequestIds().size() <= numberPlacesLeft && requestListStatusUpdate.getStatus().equals("CONFIRMED")) {
             requestIds = requestListStatusUpdate.getRequestIds();
         }
         for (Long requestId : requestIds) {
@@ -141,7 +139,7 @@ public class RequestServiceImpl implements RequestService {
             repository.save(request);
             confirmedRequests.add(RequestMapper.toRequestDto(request));
         }
-        if (requestListStatusUpdate.getStatus().equals("REJECTED")){
+        if (requestListStatusUpdate.getStatus().equals("REJECTED")) {
             requestIds = requestListStatusUpdate.getRequestIds();
             for (Long requestId : requestIds) {
                 Request request = repository.getById(requestId);

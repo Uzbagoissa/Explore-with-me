@@ -2,7 +2,6 @@ package ru.practicum.Requests;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.State.StateEnum;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

@@ -2,8 +2,6 @@ package ru.practicum.Category;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.User.User;
-import ru.practicum.User.UserDto;
 
 import java.util.ArrayList;
 import java.util.List;

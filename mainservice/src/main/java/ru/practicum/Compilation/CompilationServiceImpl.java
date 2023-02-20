@@ -3,10 +3,8 @@ package ru.practicum.Compilation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.Category.Category;
 import ru.practicum.Category.CategoryMapper;
 import ru.practicum.Category.CategoryRepository;
 import ru.practicum.Event.Event;
@@ -15,10 +13,8 @@ import ru.practicum.Event.EventMapper;
 import ru.practicum.Event.EventRepository;
 import ru.practicum.User.UserMapper;
 import ru.practicum.User.UserRepository;
-import ru.practicum.exceptions.ConflictException;
 import ru.practicum.exceptions.NotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +35,7 @@ public class CompilationServiceImpl implements CompilationService {
                 .filter(a -> a.getPinned() == pinned)
                 .skip(from)
                 .limit(size)
-                .map(a-> CompilationMapper.toCompilationDto(a, getFullEventDtoList(repository.findAllEventIdsByCompilationId(a.getId()))))
+                .map(a -> CompilationMapper.toCompilationDto(a, getFullEventDtoList(repository.findAllEventIdsByCompilationId(a.getId()))))
                 .collect(Collectors.toList());
     }
 
@@ -83,7 +79,7 @@ public class CompilationServiceImpl implements CompilationService {
         } else {
             String sqlDelete = "DELETE FROM events_compilations WHERE compilation_id = ? ";
             jdbcTemplate.update(sqlDelete, compId);
-            if (compilationNewDto.getEvents().size() != 0){
+            if (compilationNewDto.getEvents().size() != 0) {
                 for (Long eventId : compilationNewDto.getEvents()) {
                     String sqlInsert = "INSERT INTO events_compilations(compilation_id, event_id) VALUES (?, ?) ";
                     jdbcTemplate.update(sqlInsert, compId, eventId);
