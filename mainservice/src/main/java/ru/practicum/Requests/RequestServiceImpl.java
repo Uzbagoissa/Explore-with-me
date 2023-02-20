@@ -15,6 +15,7 @@ import ru.practicum.exceptions.NotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,7 +57,7 @@ public class RequestServiceImpl implements RequestService {
             log.error("Нельзя участвовать в неопубликованном событии");
             throw new ConflictException("Нельзя участвовать в неопубликованном событии");
         }
-        if (eventRepository.getById(eventId).getConfirmedRequests() == eventRepository.getById(eventId).getParticipantLimit()) {
+        if (Objects.equals(eventRepository.getById(eventId).getConfirmedRequests(), eventRepository.getById(eventId).getParticipantLimit())) {
             log.error("Достигнут лимит запросов на участие");
             throw new ConflictException("Достигнут лимит запросов на участие");
         }
@@ -98,7 +99,7 @@ public class RequestServiceImpl implements RequestService {
     public RequestListStatusUpdateResult updateRequestsStatus(long userId, long eventId, RequestListStatusUpdate requestListStatusUpdate) {
         userValid(userId);
         eventValid(eventId);
-        if (eventRepository.getById(eventId).getConfirmedRequests() == eventRepository.getById(eventId).getParticipantLimit()) {
+        if (Objects.equals(eventRepository.getById(eventId).getConfirmedRequests(), eventRepository.getById(eventId).getParticipantLimit())) {
             log.error("Достигнут лимит запросов на участие");
             throw new ConflictException("Достигнут лимит запросов на участие");
         }
