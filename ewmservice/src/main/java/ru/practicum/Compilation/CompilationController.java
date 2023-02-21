@@ -19,7 +19,7 @@ public class CompilationController {
 
     @GetMapping("/compilations")
     @ResponseStatus(HttpStatus.OK)
-    public List<CompilationDto> getAllCompilations(@RequestParam(value = "pinned") boolean pinned,
+    public List<CompilationDto> getAllCompilations(@RequestParam(value = "pinned", required = false) boolean pinned,
                                                    @RequestParam(value = "from", defaultValue = "0") long from,
                                                    @RequestParam(value = "size", defaultValue = "10") long size) {
         if (from < 0) {
@@ -59,8 +59,8 @@ public class CompilationController {
     @PatchMapping("/admin/compilations/{compId}")
     @ResponseStatus(HttpStatus.OK)
     public CompilationDto updateCompilation(@PathVariable("compId") long compId,
-                                            @Valid @RequestBody CompilationNewDto compilationNewDto) {
+                                            @Valid @RequestBody CompilationDtoForUpdate compilationDtoForUpdate) {
         log.info("Подборка обновлена");
-        return compilationService.updateCompilation(compId, compilationNewDto);
+        return compilationService.updateCompilation(compId, compilationDtoForUpdate);
     }
 }
