@@ -1,10 +1,11 @@
 package ru.practicum.Event;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface EventService {
     List<EventFullDto> getAllEvents(String text, List<Long> categories, boolean paid, String rangeStart, String rangeEnd,
-                                    boolean onlyAvailable, String sort, long from, long size);
+                                    boolean onlyAvailable, String sort, long from, long size, HttpServletRequest request);
 
     EventFullDto getEventById(long id);
 

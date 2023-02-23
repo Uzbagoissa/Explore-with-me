@@ -41,6 +41,7 @@ public class RequestServiceImpl implements RequestService {
         return RequestMapper.toListRequestDto(repository.findAllByOwnerIdAndByEventId(userId, eventId));
     }
 
+    @Transactional
     @Override
     public RequestDto saveRequest(long userId, long eventId) {
         userValid(userId);
@@ -75,6 +76,7 @@ public class RequestServiceImpl implements RequestService {
         return RequestMapper.toRequestDto(repository.save(request));
     }
 
+    @Transactional
     @Override
     public RequestDto cancelRequest(long userId, long requestId) {
         userValid(userId);
@@ -95,6 +97,7 @@ public class RequestServiceImpl implements RequestService {
         return RequestMapper.toRequestDto(repository.save(request));
     }
 
+    @Transactional
     @Override
     public RequestListStatusUpdateResult updateRequestsStatus(long userId, long eventId, RequestListStatusUpdate requestListStatusUpdate) {
         userValid(userId);

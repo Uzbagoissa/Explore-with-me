@@ -47,6 +47,7 @@ public class CompilationServiceImpl implements CompilationService {
                 getFullEventDtoList(repository.findAllEventIdsByCompilationId(compId)));
     }
 
+    @Transactional
     @Override
     public CompilationDto saveCompilation(CompilationNewDto compilationNewDto) {
         Compilation compilation = repository.save(CompilationMapper.toCompilation(compilationNewDto));
@@ -57,6 +58,7 @@ public class CompilationServiceImpl implements CompilationService {
         return CompilationMapper.toCompilationDto(compilation, getFullEventDtoList(compilationNewDto.getEvents()));
     }
 
+    @Transactional
     @Override
     public void removeCompilation(long compId) {
         compilationValid(compId);
@@ -65,6 +67,7 @@ public class CompilationServiceImpl implements CompilationService {
         repository.deleteById(compId);
     }
 
+    @Transactional
     @Override
     public CompilationDto updateCompilation(long compId, CompilationDtoForUpdate compilationDtoForUpdate) {
         compilationValid(compId);

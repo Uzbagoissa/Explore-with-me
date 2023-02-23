@@ -13,6 +13,7 @@ import ru.practicum.User.UserRepository;
 import ru.practicum.exceptions.ConflictException;
 import ru.practicum.exceptions.NotFoundException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,7 +32,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventFullDto> getAllEvents(String text, List<Long> categories, boolean paid, String rangeStart,
-                                           String rangeEnd, boolean onlyAvailable, String sort, long from, long size) {
+                                           String rangeEnd, boolean onlyAvailable, String sort, long from, long size,
+                                           HttpServletRequest request) {
         List<Event> events = new ArrayList<>();
         String state = StateEnum.PUBLISHED.toString();
         if ((text == null || text.isEmpty()) || (categories == null || categories.isEmpty()) || rangeStart == null ||
@@ -126,6 +128,7 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public EventFullDto saveEvent(long userId, EventNewDto eventNewDto) {
         userValid(userId);
@@ -139,6 +142,7 @@ public class EventServiceImpl implements EventService {
         return eventFullDto;
     }
 
+    @Transactional
     @Override
     public EventFullDto updateEvent(long userId, long eventId, EventNewDtoForUpdate eventNewDtoForUpdate) {
         userValid(userId);
@@ -170,6 +174,7 @@ public class EventServiceImpl implements EventService {
         return toFullEventDtoAbsolutely(updatedEvent);
     }
 
+    @Transactional
     @Override
     public EventFullDto updateEventAdmin(long eventId, EventNewDtoForUpdate eventNewDtoForUpdate) {
         eventCancelValid(eventId);

@@ -5,8 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.StatClient.Client;
+import ru.practicum.StatClient.EndpointHitDtoMapper;
 import ru.practicum.exceptions.IncorrectParameterException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -16,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventController {
     private final EventService eventService;
+    private final Client client;
 
     @GetMapping("/events")
     @ResponseStatus(HttpStatus.OK)
@@ -27,7 +31,8 @@ public class EventController {
                                            @RequestParam(value = "onlyAvailable", required = false) boolean onlyAvailable,
                                            @RequestParam(value = "sort", required = false) String sort,
                                            @RequestParam(value = "from", defaultValue = "0") long from,
-                                           @RequestParam(value = "size", defaultValue = "10") long size) {
+                                           @RequestParam(value = "size", defaultValue = "10") long size,
+                                           HttpServletRequest request) {
         if (from < 0) {
             log.info("Неверный параметр from: {}, from должен быть больше или равен 0 ", from);
             throw new IncorrectParameterException("Неверный параметр from: {}, from должен быть больше или равен 0 " + from);
@@ -37,13 +42,23 @@ public class EventController {
             throw new IncorrectParameterException("Неверный параметр size: {}, size должен быть больше или равен 0 " + size);
         }
         log.info("События найдены");
-        return eventService.getAllEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+        List<EventFullDto> events = eventService.getAllEvents(text, categories, paid, rangeStart, rangeEnd,
+                onlyAvailable, sort, from, size, request);
+        for (EventFullDto event : events) {
+            client.saveStat(EndpointHitDtoMapper.toEndpointHitDto(request.getRemoteAddr(), request.getServerName(),
+                    request.getRequestURI() + "/" + event.getId().toString()));
+        }
+        log.info("Статистика просмотров сохранена");
+        return events;
     }
 
     @GetMapping("/events/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public EventFullDto getEventById(@PathVariable("id") long id) {
+    public EventFullDto getEventById(@PathVariable("id") long id, HttpServletRequest request) {
+        client.saveStat(EndpointHitDtoMapper.toEndpointHitDto(request.getRemoteAddr(), request.getServerName(),
+                request.getRequestURI()));
         log.info("Событие найдено");
+        log.info("Статистика просмотров сохранена");
         return eventService.getEventById(id);
     }
 
