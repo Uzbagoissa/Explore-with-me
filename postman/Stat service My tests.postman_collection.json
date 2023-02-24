@@ -1,11 +1,85 @@
 {
 	"info": {
-		"_postman_id": "a1bb3f23-b8c5-4689-8302-fb109d585cd6",
-		"name": "Test Explore With Me - Stat service",
+		"_postman_id": "9d428b3f-2477-4dc7-8c05-8ee5a1ef1f53",
+		"name": "Stat service My tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "23391481"
+		"_exporter_id": "25925900"
 	},
 	"item": [
+		{
+			"name": "getStat connection Main & Stat servers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+							"});\r",
+							"pm.test(\"Test get stat with uniq id\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.length).to.eql(4);\r",
+							"\r",
+							"    pm.expect(jsonData[0].app).to.eql('localhost');\r",
+							"    pm.expect(jsonData[0].uri).to.eql('/events/4');\r",
+							"    pm.expect(jsonData[0].hits).to.eql(4);\r",
+							"\r",
+							"    pm.expect(jsonData[1].app).to.eql('localhost');\r",
+							"    pm.expect(jsonData[1].uri).to.eql('/events/5');\r",
+							"    pm.expect(jsonData[1].hits).to.eql(4);\r",
+							"\r",
+							"    pm.expect(jsonData[2].app).to.eql('localhost');\r",
+							"    pm.expect(jsonData[2].uri).to.eql('/events/1');\r",
+							"    pm.expect(jsonData[2].hits).to.eql(2);\r",
+							"\r",
+							"    pm.expect(jsonData[3].app).to.eql('localhost');\r",
+							"    pm.expect(jsonData[3].uri).to.eql('/events/3');\r",
+							"    pm.expect(jsonData[3].hits).to.eql(1);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "*/*",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/stats?start=2020-05-05 00:00:00&end=2027-05-05 00:00:00&uris=/events/1,/events/2,/events/3,/events/4,/events/5,/events/6&unique=false",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"stats"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2020-05-05 00:00:00"
+						},
+						{
+							"key": "end",
+							"value": "2027-05-05 00:00:00"
+						},
+						{
+							"key": "uris",
+							"value": "/events/1,/events/2,/events/3,/events/4,/events/5,/events/6"
+						},
+						{
+							"key": "unique",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
 		{
 			"name": "saveHit Invalid timestamp",
 			"event": [
@@ -492,7 +566,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/stats?start=2020-05-05 00:00:00&end=2024-05-05 00:00:00&uris=/events/1,/events/2,/events/3",
+					"raw": "{{baseUrl}}/stats?start=2020-05-05 00:00:00&end=2027-05-05 00:00:00&uris=/events/1,/events/2,/events/3,/events/4,/events/5,/events/6",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -506,11 +580,11 @@
 						},
 						{
 							"key": "end",
-							"value": "2024-05-05 00:00:00"
+							"value": "2027-05-05 00:00:00"
 						},
 						{
 							"key": "uris",
-							"value": "/events/1,/events/2,/events/3"
+							"value": "/events/1,/events/2,/events/3,/events/4,/events/5,/events/6"
 						}
 					]
 				}
@@ -558,7 +632,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/stats?start=2020-05-05 00:00:00&end=2024-05-05 00:00:00&uris=/events/1,/events/2,/events/3&unique=true",
+					"raw": "{{baseUrl}}/stats?start=2020-05-05 00:00:00&end=2027-05-05 00:00:00&uris=/events/1,/events/2,/events/3,/events/4,/events/5,/events/6&unique=true",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -572,11 +646,11 @@
 						},
 						{
 							"key": "end",
-							"value": "2024-05-05 00:00:00"
+							"value": "2027-05-05 00:00:00"
 						},
 						{
 							"key": "uris",
-							"value": "/events/1,/events/2,/events/3"
+							"value": "/events/1,/events/2,/events/3,/events/4,/events/5,/events/6"
 						},
 						{
 							"key": "unique",

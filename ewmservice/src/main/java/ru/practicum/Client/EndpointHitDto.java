@@ -1,4 +1,4 @@
-package ru.practicum.StatClient;
+package ru.practicum.Client;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

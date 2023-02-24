@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.StatClient.Client;
-import ru.practicum.StatClient.EndpointHitDtoMapper;
+import ru.practicum.Client.Client;
+import ru.practicum.Client.EndpointHitDtoMapper;
 import ru.practicum.exceptions.IncorrectParameterException;
 
 import javax.servlet.http.HttpServletRequest;

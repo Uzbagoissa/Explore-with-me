@@ -1,31 +1,31 @@
-package ru.practicum.StatClient;
+package ru.practicum.Client;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.util.List;
-import java.util.Map;
 
-@Service
-public class Client {
-    protected final RestTemplate rest = new RestTemplate();
+public class BaseClient {
+    protected final RestTemplate rest;
 
-    public ResponseEntity<Object> saveStat(EndpointHitDto endpointHitDto) {
+    public BaseClient(RestTemplate rest) {
+        this.rest = rest;
+    }
+
+    protected <T> ResponseEntity<Object> post(String path, T body) {
+        return makeAndSendRequest(HttpMethod.POST, path, body);
+    }
+
+    private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path, @Nullable T body) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-        HttpEntity<EndpointHitDto> requestEntity = new HttpEntity<>(endpointHitDto, headers);
+        HttpEntity<T> requestEntity = new HttpEntity<>(body, headers);
         ResponseEntity<Object> response;
         try {
-            response = rest.exchange("http://localhost:9090/hit", HttpMethod.POST, requestEntity, Object.class);
+            response = rest.exchange(path, method, requestEntity, Object.class);
         } catch (HttpStatusCodeException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
         }

@@ -1,4 +1,4 @@
-package ru.practicum.StatClient;
+package ru.practicum.Client;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
