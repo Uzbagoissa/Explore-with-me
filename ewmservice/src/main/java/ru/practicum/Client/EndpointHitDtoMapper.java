@@ -9,10 +9,10 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EndpointHitDtoMapper {
 
-    public static EndpointHitDto toEndpointHitDto(String ip, String serverName, String uri) {
+    public static EndpointHitDto toEndpointHitDto(String ip, String uri) {
         EndpointHitDto endpointHitDto = new EndpointHitDto();
         endpointHitDto.setIp(ip);
-        endpointHitDto.setApp(serverName);
+        endpointHitDto.setApp("ewm-main-service");
         endpointHitDto.setUri(uri);
         endpointHitDto.setTimestamp(localDateTimeToString(LocalDateTime.now()));
         return endpointHitDto;
