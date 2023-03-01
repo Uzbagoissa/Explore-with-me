@@ -8,13 +8,13 @@ import javax.validation.Valid;
 import java.util.List;
 
 public interface CommentService {
-    List<CommentDto> getAllCommentsByUserId(long from, long size);
+    List<CommentDto> getAllCommentsByUserId(long userId, long from, long size);
 
     CommentDto getCommentById(long commentId);
 
-    CommentDto saveComment(CommentNewDto commentNewDto, long userId);
+    CommentDto saveComment(CommentNewDto commentNewDto, long userId, long eventId);
 
-    CommentDto updateComment(CommentNewDto commentNewDto, long commentId);
+    CommentDto updateComment(CommentNewDto commentNewDto, long commentId, long userId);
 
-    void removeComment(long commentId);
+    void removeComment(long userId, long commentId);
 }

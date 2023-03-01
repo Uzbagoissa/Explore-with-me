@@ -13,4 +13,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "WHERE C.USER_ID = ?1 ", nativeQuery = true)
     List<Comment> findCommentsByUserId(long userId);
 
+    @Query(value = "SELECT C.* " +
+            "FROM COMMENTS AS C " +
+            "WHERE C.EVENT_ID = ?1 ", nativeQuery = true)
+    List<Comment> findCommentsByEventId(long eventId);
+
 }

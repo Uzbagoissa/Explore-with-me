@@ -3,7 +3,10 @@ package ru.practicum.Event;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.Category.CategoryDto;
+import ru.practicum.Comment.CommentShortDto;
 import ru.practicum.User.UserDto;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -27,4 +30,5 @@ public class EventFullDto {
     String state;
     String title;
     Long views;
+    List<CommentShortDto> comments;
 }

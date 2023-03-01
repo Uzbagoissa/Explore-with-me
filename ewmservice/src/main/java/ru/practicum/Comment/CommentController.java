@@ -20,9 +20,10 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
-    @GetMapping()
+    @GetMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<CommentDto> getAllCommentsByUserId(@RequestParam(value = "from", defaultValue = "0") long from,
+    public List<CommentDto> getAllCommentsByUserId(@PathVariable long userId,
+                                                   @RequestParam(value = "from", defaultValue = "0") long from,
                                                    @RequestParam(value = "size", defaultValue = "10") long size) {
         if (from < 0) {
             log.info("Неверный параметр from: {}, from должен быть больше или равен 0 ", from);
@@ -33,7 +34,7 @@ public class CommentController {
             throw new IncorrectParameterException("Неверный параметр size: {}, size должен быть больше или равен 0 " + size);
         }
         log.info("Комментарии найдены");
-        return commentService.getAllCommentsByUserId(from, size);
+        return commentService.getAllCommentsByUserId(userId, from, size);
     }
 
     @GetMapping("/{commentId}")
@@ -43,26 +44,29 @@ public class CommentController {
         return commentService.getCommentById(commentId);
     }
 
-    @PostMapping("/{userId}")
+    @PostMapping("/users/{userId}/events/{eventId}")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto saveComment(@PathVariable long userId,
+                                  @PathVariable long eventId,
                                   @Valid @RequestBody CommentNewDto commentNewDto) {
         log.info("Комментарий сохранен");
-        return commentService.saveComment(commentNewDto, userId);
+        return commentService.saveComment(commentNewDto, userId, eventId);
     }
 
-    @PatchMapping("/{commentId}")
+    @PatchMapping("/{commentId}/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public CommentDto updateComment(@Valid @RequestBody CommentNewDto commentNewDto,
-                                    @PathVariable long commentId) {
+    public CommentDto updateComment(@PathVariable long userId,
+                                    @PathVariable long commentId,
+                                    @Valid @RequestBody CommentNewDto commentNewDto) {
         log.info("Комментарий обновлен");
-        return commentService.updateComment(commentNewDto, commentId);
+        return commentService.updateComment(commentNewDto, commentId, userId);
     }
 
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/{commentId}/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeComment(@PathVariable long commentId) {
+    public void removeComment(@PathVariable long userId,
+                              @PathVariable long commentId) {
         log.info("Комментарий удален");
-        commentService.removeComment(commentId);
+        commentService.removeComment(userId, commentId);
     }
 }

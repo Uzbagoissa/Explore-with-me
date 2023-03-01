@@ -20,6 +20,14 @@ public final class CommentMapper {
         return commentDto;
     }
 
+    public static CommentShortDto toCommentShortDto(Comment comment, String userName) {
+        CommentShortDto commentShortDto = new CommentShortDto();
+        commentShortDto.setComment(comment.getComment());
+        commentShortDto.setUserName(userName);
+        commentShortDto.setCreated(comment.getCreated());
+        return commentShortDto;
+    }
+
     public static Comment toComment(CommentNewDto commentNewDto, long userId, long eventId, LocalDateTime created) {
         Comment comment = new Comment();
         comment.setComment(commentNewDto.getComment());
@@ -28,13 +36,5 @@ public final class CommentMapper {
         comment.setCreated(created);
         return comment;
     }
-
-    /*public static List<CommentDto> toListUserDto(Iterable<Comment> users) {
-        List<CommentDto> result = new ArrayList<>();
-        for (Comment comment : users) {
-            result.add(toUserDto(comment));
-        }
-        return result;
-    }*/
 
 }
