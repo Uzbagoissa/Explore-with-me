@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     Event findEventById(Long id);
+
     @Query(value = "SELECT E.* " +
             "FROM EVENTS AS E " +
             "WHERE E.INITIATOR_ID = ?1 ", nativeQuery = true)

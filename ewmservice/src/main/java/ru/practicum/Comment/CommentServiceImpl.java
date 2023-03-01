@@ -4,18 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.Category.Category;
-import ru.practicum.Category.CategoryMapper;
-import ru.practicum.Event.Event;
 import ru.practicum.Event.EventRepository;
-import ru.practicum.Event.Location;
 import ru.practicum.State.StateEnum;
-import ru.practicum.User.UserMapper;
 import ru.practicum.exceptions.ConflictException;
 import ru.practicum.exceptions.NotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

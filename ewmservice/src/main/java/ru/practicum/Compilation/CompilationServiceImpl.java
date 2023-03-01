@@ -5,17 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.Category.CategoryMapper;
-import ru.practicum.Category.CategoryRepository;
-import ru.practicum.Comment.CommentMapper;
-import ru.practicum.Comment.CommentRepository;
-import ru.practicum.Comment.CommentShortDto;
 import ru.practicum.Event.*;
-import ru.practicum.User.UserMapper;
-import ru.practicum.User.UserRepository;
 import ru.practicum.exceptions.NotFoundException;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
