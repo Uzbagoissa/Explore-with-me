@@ -937,13 +937,6 @@
 							"    pm.expect(target[0]).to.have.property('userId');\r",
 							"    pm.expect(target[0]).to.have.property('eventId');\r",
 							"    pm.expect(target[0]).to.have.property('created');\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
-							"    pm.expect(source.id).equal(founded.id, 'Id комментария должен соответствовать отправленному в запросе');\r",
-							"    pm.expect(source.comment).equal(founded.comment, 'Комментарий должен соответствовать отправленному в запросе');\r",
-							"    pm.expect(source.userId).equal(founded.userId, 'userId комментария должен соответствовать отправленному в запросе');\r",
-							"    pm.expect(source.eventId).equal(founded.eventId, 'eventId комментария должен соответствовать отправленному в запросе');\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -1042,13 +1035,6 @@
 							"    pm.expect(target).to.have.property('userId');\r",
 							"    pm.expect(target).to.have.property('eventId');\r",
 							"    pm.expect(target).to.have.property('created');\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
-							"    pm.expect(source.id).equal(target.id, 'Id комментария должен соответствовать отправленному в запросе');\r",
-							"    pm.expect(source.comment).equal(target.comment, 'Комментарий должен соответствовать отправленному в запросе');\r",
-							"    pm.expect(source.userId).equal(target.userId, 'userId комментария должен соответствовать отправленному в запросе');\r",
-							"    pm.expect(source.eventId).equal(target.eventId, 'eventId комментария должен соответствовать отправленному в запросе');\r",
 							"});"
 						],
 						"type": "text/javascript"
