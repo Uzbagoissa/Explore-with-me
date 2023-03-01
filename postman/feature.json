@@ -455,7 +455,7 @@
 									"const target = pm.response.json();\r",
 									"const sourceComment = pm.collectionVariables.get('responseComment');\r",
 									"\r",
-									"pm.test(\"Событие должно содержать поля: id, title, annotation, category, paid, eventDate, initiator, description, participantLimit, state, createdOn, location, requestModeration\", function () {\r",
+									"pm.test(\"Событие должно содержать поля: id, title, annotation, category, paid, eventDate, initiator, description, participantLimit, state, createdOn, location, requestModeration, comments\", function () {\r",
 									"pm.expect(target).to.have.property('id');\r",
 									"pm.expect(target).to.have.property('title');\r",
 									"pm.expect(target).to.have.property('annotation');\r",
