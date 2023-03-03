@@ -74,7 +74,7 @@ public class EventServiceImpl implements EventService {
         if (repository.getById(id).getState().equals(StateEnum.PUBLISHED.toString())) {
             Long views = repository.findEventById(id).getViews();
             views++;
-            String sqlUpdate = "UPDATE EVENTS SET VIEWS = ? WHERE ID = ?";
+            String sqlUpdate = "UPDATE events SET views = ? WHERE id = ?";
             jdbcTemplate.update(sqlUpdate, views, id);
             Event event = repository.findEventById(id);
             event.setViews(views);

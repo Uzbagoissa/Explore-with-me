@@ -8,14 +8,14 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Comment findCommentById(Long id);
 
-    @Query(value = "SELECT C.* " +
-            "FROM COMMENTS AS C " +
-            "WHERE C.USER_ID = ?1 ", nativeQuery = true)
+    @Query(value = "SELECT c.* " +
+            "FROM comments AS c " +
+            "WHERE c.user_id = ?1 ", nativeQuery = true)
     List<Comment> findCommentsByUserId(long userId);
 
-    @Query(value = "SELECT C.* " +
-            "FROM COMMENTS AS C " +
-            "WHERE C.EVENT_ID = ?1 ", nativeQuery = true)
+    @Query(value = "SELECT c.* " +
+            "FROM comments AS c " +
+            "WHERE c.event_id = ?1 ", nativeQuery = true)
     List<Comment> findCommentsByEventId(long eventId);
 
 }

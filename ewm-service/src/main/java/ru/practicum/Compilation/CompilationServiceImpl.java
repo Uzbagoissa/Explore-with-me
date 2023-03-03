@@ -43,7 +43,7 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto saveCompilation(CompilationNewDto compilationNewDto) {
         Compilation compilation = repository.save(CompilationMapper.toCompilation(compilationNewDto));
         for (Long eventId : compilationNewDto.getEvents()) {
-            String sql = "INSERT INTO EVENTS_COMPILATIONS(COMPILATION_ID, EVENT_ID) VALUES (?, ?) ";
+            String sql = "INSERT INTO events_compilations(compilation_id, event_id) VALUES (?, ?) ";
             jdbcTemplate.update(sql, compilation.getId(), eventId);
         }
         return CompilationMapper.toCompilationDto(compilation, getFullEventDtoList(compilationNewDto.getEvents()));
@@ -53,7 +53,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public void removeCompilation(long compId) {
         compilationValid(compId);
-        String sqlDelete = "DELETE FROM EVENTS_COMPILATIONS WHERE COMPILATION_ID = ? ";
+        String sqlDelete = "DELETE FROM events_compilations WHERE compilation_id = ? ";
         jdbcTemplate.update(sqlDelete, compId);
         repository.deleteById(compId);
     }
@@ -72,11 +72,11 @@ public class CompilationServiceImpl implements CompilationService {
         if (compilationDtoForUpdate.getEvents() == null) {
             compilationDtoForUpdate.setEvents(repository.findAllEventIdsByCompilationId(compId));
         } else {
-            String sqlDelete = "DELETE FROM EVENTS_COMPILATIONS WHERE COMPILATION_ID = ? ";
+            String sqlDelete = "DELETE FROM events_compilations WHERE compilation_id = ? ";
             jdbcTemplate.update(sqlDelete, compId);
             if (compilationDtoForUpdate.getEvents().size() != 0) {
                 for (Long eventId : compilationDtoForUpdate.getEvents()) {
-                    String sqlInsert = "INSERT INTO EVENTS_COMPILATIONS(COMPILATION_ID, EVENT_ID) VALUES (?, ?) ";
+                    String sqlInsert = "INSERT INTO events_compilations(compilation_id, event_id) VALUES (?, ?) ";
                     jdbcTemplate.update(sqlInsert, compId, eventId);
                 }
             }

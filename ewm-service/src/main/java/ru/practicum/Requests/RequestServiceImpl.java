@@ -3,7 +3,6 @@ package ru.practicum.Requests;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.Event.EventRepository;
@@ -70,10 +69,9 @@ public class RequestServiceImpl implements RequestService {
         Request request = RequestMapper.toRequest(userId, eventId);
         if (!eventRepository.getById(eventId).getRequestModeration()) {
             request.setStatus(StateEnum.CONFIRMED.toString());
-            String sqlSelect = "SELECT CONFIRMED_REQUESTS FROM EVENTS WHERE ID = ?";
-            Long confirmedRequests = jdbcTemplate.queryForObject(sqlSelect, Long.class, eventId);
+            Long confirmedRequests = eventRepository.findEventById(eventId).getConfirmedRequests();
             confirmedRequests++;
-            String sqlUpdate = "UPDATE EVENTS SET CONFIRMED_REQUESTS = ? WHERE ID = ?";
+            String sqlUpdate = "UPDATE events SET confirmed_requests = ? WHERE id = ?";
             jdbcTemplate.update(sqlUpdate, confirmedRequests, eventId);
         } else {
             request.setStatus(StateEnum.PENDING.toString());
@@ -92,10 +90,9 @@ public class RequestServiceImpl implements RequestService {
             throw new ConflictException("Пользователю запрещено отменять чужой запрос!");
         }
         if (request.getStatus().equals(StateEnum.CONFIRMED.toString())) {
-            String sqlSelect = "SELECT CONFIRMED_REQUESTS FROM EVENTS WHERE ID = ?";
-            Long confirmedRequests = jdbcTemplate.queryForObject(sqlSelect, Long.class, request.getEvent());
+            Long confirmedRequests = eventRepository.findEventById(request.getEvent()).getConfirmedRequests();
             confirmedRequests--;
-            String sqlUpdate = "UPDATE EVENTS SET CONFIRMED_REQUESTS = ? WHERE ID = ?";
+            String sqlUpdate = "UPDATE events SET confirmed_requests = ? WHERE id = ?";
             jdbcTemplate.update(sqlUpdate, confirmedRequests, request.getEvent());
         }
         request.setStatus(StateEnum.CANCELED.toString());
@@ -137,14 +134,10 @@ public class RequestServiceImpl implements RequestService {
         for (Long requestId : requestIds) {
             Request request = repository.getById(requestId);
             request.setStatus(requestListStatusUpdate.getStatus());
-            String sqlSelect = "SELECT CONFIRMED_REQUESTS FROM EVENTS WHERE ID = ?";
-            Long numberConfirmedRequests = jdbcTemplate.queryForObject(sqlSelect, Long.class, eventId);
+            Long numberConfirmedRequests = eventRepository.findEventById(eventId).getConfirmedRequests();
             numberConfirmedRequests++;
-            String sqlUpdate = "UPDATE EVENTS SET CONFIRMED_REQUESTS = ? WHERE ID = ?";
+            String sqlUpdate = "UPDATE events SET confirmed_requests = ? WHERE id = ?";
             jdbcTemplate.update(sqlUpdate, numberConfirmedRequests, eventId);
-            String sql = "SELECT * FROM EVENTS WHERE ID = ?";
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, eventId);
-            rowSet.next();
             repository.save(request);
             confirmedRequests.add(RequestMapper.toRequestDto(request));
         }
