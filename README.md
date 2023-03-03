@@ -1,7 +1,5 @@
 # java-explore-with-me
 
-### Ссылка на пул-реквест: https://github.com/Uzbagoissa/java-explore-with-me/pull/3
-
 
 # StatsService
 
