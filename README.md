@@ -1,5 +1,6 @@
 # java-explore-with-me
 
+### Ссылка на пул-реквест: https://github.com/Uzbagoissa/java-explore-with-me/pull/3
 
 # StatsService
 
@@ -13,9 +14,9 @@
 4. ip
 5. time_stamp
 
-# EwmService
+# EwmService + Feature_Comments
 
-![](pictures/ewmService.png)
+![](pictures/ewmService&feature.png)
 
 ## Таблица USERS
 
@@ -68,3 +69,11 @@
 1. id - PRIMARY KEY AUTO INCREMENT
 2. compilation_id - FOREIGN KEY (COMPILATIONS)
 3. event_id - FOREIGN KEY (EVENTS)  
+
+## Таблица COMMENTS
+
+1. id - PRIMARY KEY AUTO INCREMENT
+2. comment_line
+3. user_id - FOREIGN KEY (USERS)
+4. event_id - FOREIGN KEY (EVENTS)
+5. created
